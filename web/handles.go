@@ -20,7 +20,7 @@ func (hp *HandlerPack) getIP(r *http.Request) string {
 Вспомогательная функция, извлекает токен из запроса
 */
 func (hp *HandlerPack) getToken(r *http.Request) string {
-	authorization := r.Header.Get("Authorization")
+	authorization := r.Header.Get("Authorization") // нечувствительно к регистру
 	return strings.TrimSpace(strings.Replace(authorization, "Bearer", "", 1))
 }
 
@@ -155,6 +155,7 @@ func (hp *HandlerPack) GetAsset(w http.ResponseWriter, r *http.Request) {
 
 /*
 Удаление ассета, если он был. Если не было, возвращаем 404.
+Функционал пакетного удаления не затребован, поэтому удаляем ассеты только по одному.
 */
 func (hp *HandlerPack) DelAsset(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
