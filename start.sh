@@ -135,9 +135,12 @@ echo -n "= User 'alice' request asset list once more (there are none already): "
 OUT=`curl -s -H "Authorization: Bearer ${ALICE_TOKEN_NEW}" http://${MICROP_ADRESS}/api/asset|tail -n1`
 assert "${OUT}" '{}'
 
+echo -n "= User 'bob' tries HTTPS request: "
+OUT=`curl -s -k -H "Authorization: Bearer ${BOB_TOKEN}" https://${MICROP_HOST}/api/asset|tail -n1`
+assert "${OUT}" '{"assets":["song"]}'
+
 echo -n "= User 'bob' tries request with redirect to HTTPS: "
-MICROP_ADRESS="${MICROP_HOST}:80"
-OUT=`curl -s -k --location-trusted -L -H "Authorization: Bearer ${BOB_TOKEN}" http://${MICROP_ADRESS}/api/asset|tail -n1`
+OUT=`curl -s -k --location-trusted -L -H "Authorization: Bearer ${BOB_TOKEN}" http://${MICROP_HOST}/api/asset|tail -n1`
 assert "${OUT}" '{"assets":["song"]}'
 
 echo -e "\n=== Summary ==="
