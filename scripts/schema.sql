@@ -53,7 +53,7 @@ BEGIN
         on conflict do nothing;
     SELECT id FROM sessions
         WHERE uid=(SELECT id FROM users WHERE login=name AND password_hash=encode(digest(pass, 'md5'),'hex'))
-        AND created_at > (NOW() - INTERVAL '1 DAY')
+        AND created_at > (NOW() - INTERVAL '1 DAY') -- ограничение срока жизни токена
         ORDER BY created_at DESC LIMIT 1 INTO token;
     SELECT coalesce(token,'') INTO token; -- Затычка, если не нашлось. Иначе парсер выдаст ворнинг
     RETURN token;
@@ -69,7 +69,7 @@ BEGIN
         (SELECT uid AS user_id FROM sessions
             WHERE id=token 
             AND ip_addr=ipaddr
-            AND created_at > (NOW() - INTERVAL '1 DAY')
+            AND created_at > (NOW() - INTERVAL '1 DAY') -- ограничение срока жизни токена
             AND created_at=(
                 SELECT max(created_at) FROM sessions
                     WHERE uid=(SELECT uid FROM sessions WHERE id=token)));

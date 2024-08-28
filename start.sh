@@ -99,6 +99,22 @@ echo -n "= User 'alice' uploads one more asset 'bonus': "
 OUT=`curl -s -X POST -H "Authorization: Bearer ${ALICE_TOKEN_NEW}" http://${MICROP_ADRESS}/api/upload-asset/bonus -d @test/bonus.txt|tail -n1`
 assert "${OUT}" '{"status":"ok"}'
 
+echo -n "= User 'alice' uploads asset with wrong token: "
+OUT=`curl -s -X POST -H "Authorization: Bearer somewrongtoken" http://${MICROP_ADRESS}/api/upload-asset/bonus -d @test/bonus.txt|tail -n1`
+assert "${OUT}" '{"error":"unauthorized"}'
+
+echo -n "= User 'alice' uploads asset with no token at all: "
+OUT=`curl -s -X POST http://${MICROP_ADRESS}/api/upload-asset/bonus -d @test/bonus.txt|tail -n1`
+assert "${OUT}" '{"error":"unauthorized"}'
+
+echo -n "= Trying to delete an asset with other user's token: "
+OUT=`curl -s -X DELETE -H "Authorization: Bearer ${BOB_TOKEN}" http://${MICROP_ADRESS}/api/asset/book|tail -n1`
+assert "${OUT}" '{"error":"not found"}'
+
+echo -n "= Trying to delete an asset with no token at all: "
+OUT=`curl -s -X DELETE http://${MICROP_ADRESS}/api/asset/book|tail -n1`
+assert "${OUT}" '{"error":"unauthorized"}'
+
 echo -n "= User 'alice' request asset list: "
 OUT=`curl -s -H "Authorization: Bearer ${ALICE_TOKEN_NEW}" http://${MICROP_ADRESS}/api/asset|tail -n1`
 assert "${OUT}" '{"assets":["bonus","book"]}'
