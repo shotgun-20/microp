@@ -12,6 +12,10 @@ import (
 Вспомогательная функция, извлекает IP клиента из запроса
 */
 func (hp *HandlerPack) getIP(r *http.Request) string {
+	addrinfo := r.Header.Get("X-Forwarded-For")
+	if addrinfo != "" {
+		return addrinfo
+	}
 	addrInfo := strings.Split(r.RemoteAddr, ":")
 	return strings.Join(addrInfo[:len(addrInfo)-1], ":")
 }
