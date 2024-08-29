@@ -149,5 +149,5 @@ echo "Tests FAILED: ${FAIL}"
 echo ""
 echo "== Cleaning up"
 
-docker compose down --volumes
+#docker compose down --volumes
 exit ${FAIL}
